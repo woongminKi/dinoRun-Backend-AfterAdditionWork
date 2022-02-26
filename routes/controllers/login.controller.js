@@ -1,5 +1,7 @@
 const createError = require("http-errors");
+const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
+const { TOKEN } = require("../../utils/tokenInfo");
 
 const {
   GET_USER_INFO_FAIL,
@@ -8,12 +10,21 @@ const {
 } = require("../../utils/constants");
 
 exports.getUser = async (req, res, next) => {
-  const { email } = req.user;
+  const { email, name } = req.user;
+  const userInfo = { email, name };
 
   try {
     const user = await User.findOne({ email }).lean().exec();
 
-    res.status(200).send({ user });
+    const accessToken = await jwt.sign(userInfo, process.env.SECRET_KEY, {
+      expiresIn: TOKEN.accessTokenLimit,
+    });
+
+    const refreshToken = jwt.sign(userInfo, process.env.SECRET_KEY, {
+      expiresIn: TOKEN.refreshTokenLimit,
+    });
+
+    res.status(200).send({ user, accessToken, refreshToken });
   } catch (err) {
     next(createError(500, { message: GET_USER_INFO_FAIL }));
   }

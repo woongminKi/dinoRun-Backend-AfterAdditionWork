@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { getUser, signIn } = require("./controllers/login.controller");
-const verifyToken = require("../middlewares/verifyToken");
+const verifyFirebaseToken = require("../middlewares/verifyFirebaseToken");
 
-router.get("/", verifyToken, getUser);
+router.get("/", verifyFirebaseToken, getUser);
 router.post("/", signIn);
 
 module.exports = router;
