@@ -1,7 +1,8 @@
 const createError = require("http-errors");
 const admin = require("../config/firebase");
+const { UNAUTHORIZED_TOKEN, FORBIDDEN } = require("../utils/constants");
 
-async function verifyToken(req, res, next) {
+async function verifyFirebaseToken(req, res, next) {
   const token = req.headers.authorization;
 
   try {
@@ -11,13 +12,12 @@ async function verifyToken(req, res, next) {
       req.user = decode;
 
       next();
-      return;
     } else {
-      next(createError(500, "유효하지 않은 토큰입니다."));
+      next(createError(500, UNAUTHORIZED_TOKEN));
     }
   } catch (err) {
-    next(createError(403, 'Forbidden'));
+    next(createError(403, FORBIDDEN));
   }
 }
 
-module.exports = verifyToken;
+module.exports = verifyFirebaseToken;

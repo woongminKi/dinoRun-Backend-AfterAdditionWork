@@ -11,6 +11,7 @@ mongoose.connect(process.env.MONGO_URL, {
 
 const index = require("./routes/index");
 const login = require("./routes/login");
+const rooms = require("./routes/rooms");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", index);
 app.use("/login", login);
+app.use("/rooms", rooms);
 
 app.use(function(req, res, next) {
   next(createError(404));
