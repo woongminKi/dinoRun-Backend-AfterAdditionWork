@@ -8,4 +8,4 @@ exports.TOKEN = {
 exports.ERROR_MESSAGE = {
   jwtExpired: "jwt expired",
   jwtMalformed: "jwt malformed",
-}
+};
