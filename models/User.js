@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String,
-  }
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

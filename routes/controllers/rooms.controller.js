@@ -7,12 +7,12 @@ const {
   REGISTER_ROOM_INFO_FAIL,
   GET_ROOM_INFO_FAIL,
   DELETE_ROOM_INFO_SUCCESS,
-  NOT_FOUND
+  NOT_FOUND,
 } = require("../../utils/constants");
 
 exports.getRoomInfo = async (req, res, next) => {
-  if (req.cookie) {
-    const { email, name } = req.cookie;
+  if (res.cookie) {
+    const { email, name } = res.cookie;
     const newAccessToken = jwt.sign({ email, name }, process.env.SECRET_KEY, {
       expiresIn: TOKEN.accessTokenLimit,
     });
@@ -21,45 +21,53 @@ exports.getRoomInfo = async (req, res, next) => {
     return;
   }
 
-  const { name } = req.user;
-
   try {
-    const room = await Room.findOne({ displayName: name }).lean().exec();
+    const roomArray = await Room.find().lean().exec();
 
-    res.status(200).send({ room });
-  } catch(err) {
+    res.status(200).send({ roomArray });
+  } catch (err) {
     next(createError(500, { message: GET_ROOM_INFO_FAIL }));
   }
 };
 
 exports.registerRoom = async (req, res, next) => {
+  const { id } = req.params;
+  const userId = id;
+
   const { title, userObj } = req.body;
-  const { id, displayName } = userObj;
+  const { displayName } = userObj;
 
   try {
     await Room.create({
-      title,
-      participants: [{
-        userId: id,
-        displayName,
-      }]
+      author: {
+        id: userId,
+        name: displayName,
+      },
+      roomInfo: {
+        title,
+        participants: [
+          {
+            userId,
+            displayName,
+          },
+        ],
+      },
     });
 
     res.status(200).send({ result: REGISTER_ROOM_INFO_SUCCESS });
-  } catch(err) {
+  } catch (err) {
     next(createError(500, { message: REGISTER_ROOM_INFO_FAIL }));
   }
 };
 
 exports.deleteRoom = async (req, res, next) => {
-  const { room } = req.body;
-  const title = room.title;
+  const { _id } = req.body.targetRoom;
 
   try {
-    await Room.findOneAndDelete({ title }).lean().exec();
+    await Room.findOneAndDelete({ _id }).lean().exec();
 
     res.status(200).send({ result: DELETE_ROOM_INFO_SUCCESS });
-  } catch(err) {
+  } catch (err) {
     next(createError(404, NOT_FOUND));
   }
 };
