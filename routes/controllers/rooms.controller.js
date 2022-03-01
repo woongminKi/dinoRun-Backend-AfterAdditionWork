@@ -24,7 +24,7 @@ exports.getRoomInfo = async (req, res, next) => {
   try {
     const roomArray = await Room.find().lean().exec();
 
-    res.status(200).send({ roomArray });
+    res.status(200).send(roomArray);
   } catch (err) {
     next(createError(500, { message: GET_ROOM_INFO_FAIL }));
   }
@@ -38,21 +38,23 @@ exports.registerRoom = async (req, res, next) => {
   const { displayName } = userObj;
 
   try {
-    await Room.create({
-      author: {
-        id: userId,
-        name: displayName,
+    await Room.create([
+      {
+        author: {
+          id: userId,
+          name: displayName,
+        },
+        roomInfo: {
+          title,
+          participants: [
+            {
+              userId,
+              displayName,
+            },
+          ],
+        },
       },
-      roomInfo: {
-        title,
-        participants: [
-          {
-            userId,
-            displayName,
-          },
-        ],
-      },
-    });
+    ]);
 
     res.status(200).send({ result: REGISTER_ROOM_INFO_SUCCESS });
   } catch (err) {
@@ -65,8 +67,11 @@ exports.deleteRoom = async (req, res, next) => {
 
   try {
     await Room.findOneAndDelete({ _id }).lean().exec();
+    const roomArray = await Room.find().lean().exec();
 
-    res.status(200).send({ result: DELETE_ROOM_INFO_SUCCESS });
+    res
+      .status(200)
+      .send({ result: DELETE_ROOM_INFO_SUCCESS, remainRooms: roomArray });
   } catch (err) {
     next(createError(404, NOT_FOUND));
   }
