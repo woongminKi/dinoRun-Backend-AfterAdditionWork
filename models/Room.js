@@ -1,29 +1,31 @@
 const mongoose = require("mongoose");
 
-const RoomSchema = new mongoose.Schema({
-  id: mongoose.Schema.Types.ObjectId,
-  author: {
+const RoomSchema = new mongoose.Schema([
+  {
     id: mongoose.Schema.Types.ObjectId,
-    name: {
-      type: String,
-    },
-  },
-  roomInfo: {
-    title: {
-      type: String,
-    },
-    participants: [
-      {
-        userId: {
-          type: String,
-        },
-        displayName: {
-          type: String,
-        },
+    author: {
+      id: mongoose.Schema.Types.ObjectId,
+      name: {
+        type: String,
       },
-    ],
+    },
+    roomInfo: {
+      title: {
+        type: String,
+      },
+      participants: [
+        {
+          userId: {
+            type: String,
+          },
+          displayName: {
+            type: String,
+          },
+        },
+      ],
+    },
   },
-});
+]);
 
 const Room = mongoose.model("Room", RoomSchema);
 
