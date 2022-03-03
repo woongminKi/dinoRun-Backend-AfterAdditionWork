@@ -4,11 +4,13 @@ const verifyToken = require("../middlewares/verifyToken");
 const {
   getRoomInfo,
   registerRoom,
+  getRoomPeople,
   deleteRoom,
 } = require("./controllers/rooms.controller");
 
-router.get("/:roomid", verifyToken, getRoomInfo);
-router.post("/:roomid", verifyToken, registerRoom);
-router.delete("/:roomid", deleteRoom);
+router.get("/:id", verifyToken, getRoomInfo);
+router.get("/:id/game", verifyToken, getRoomPeople);
+router.post("/:id", verifyToken, registerRoom);
+router.delete("/:id", deleteRoom);
 
 module.exports = router;

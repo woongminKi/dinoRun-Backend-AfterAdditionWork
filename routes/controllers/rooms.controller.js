@@ -7,6 +7,7 @@ const {
   REGISTER_ROOM_INFO_FAIL,
   GET_ROOM_INFO_FAIL,
   DELETE_ROOM_INFO_SUCCESS,
+  GET_PARTICIPANT_USER_INFO_FAIL,
   NOT_FOUND,
 } = require("../../utils/constants");
 
@@ -26,39 +27,56 @@ exports.getRoomInfo = async (req, res, next) => {
 
     res.status(200).send(roomArray);
   } catch (err) {
-    next(createError(500, { message: GET_ROOM_INFO_FAIL }));
+    next(createError(404, { message: GET_ROOM_INFO_FAIL }));
   }
 };
 
 exports.registerRoom = async (req, res, next) => {
-  const { id } = req.params;
-  const userId = id;
-
-  const { title, userObj } = req.body;
-  const { displayName } = userObj;
+  const { title, user } = req.body;
 
   try {
     await Room.create([
       {
         author: {
-          id: userId,
-          name: displayName,
+          id: user._id,
+          name: user.displayName,
         },
         roomInfo: {
           title,
-          participants: [
-            {
-              userId,
-              displayName,
-            },
-          ],
+          participants: [user],
         },
       },
     ]);
 
     res.status(200).send({ result: REGISTER_ROOM_INFO_SUCCESS });
   } catch (err) {
-    next(createError(500, { message: REGISTER_ROOM_INFO_FAIL }));
+    next(createError(404, { message: REGISTER_ROOM_INFO_FAIL }));
+  }
+};
+
+exports.getRoomPeople = async (req, res, next) => {
+  if (res.cookie) {
+    const { email, name } = res.cookie;
+    const newAccessToken = jwt.sign({ email, name }, process.env.SECRET_KEY, {
+      expiresIn: TOKEN.accessTokenLimit,
+    });
+
+    res.status(200).send({ newAccessToken });
+    return;
+  }
+
+  const { roomid } = req.headers;
+
+  try {
+    const currentRoom = await Room.findById(roomid);
+    const currentRoomPeople = currentRoom.roomInfo.participants;
+    res.status(200).send({ currentPeople: currentRoomPeople });
+  } catch (err) {
+    next(
+      createError(404, {
+        message: GET_PARTICIPANT_USER_INFO_FAIL,
+      })
+    );
   }
 };
 
