@@ -11,6 +11,8 @@ module.exports = {
   UNAUTHORIZED_TOKEN: "유효하지 않은 토큰입니다.",
   EXPIRED_TOKEN: "토근이 만료 됐습니다. 새로 로그인 해주세요.",
   MALFORMED_TOKEN: "잘못 된 토큰입니다. 새로 로그인 해주세요.",
+  GET_PARTICIPANT_USER_INFO_FAIL:
+    "방에 참가한 유저 데이터 갖고 오는데 실패했습니다.",
   FORBIDDEN: "Forbidden",
   NOT_FOUND: "Not found",
 };

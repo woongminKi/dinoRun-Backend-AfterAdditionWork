@@ -26,7 +26,7 @@ exports.getUser = async (req, res, next) => {
 
     res.status(200).send({ user, accessToken, refreshToken });
   } catch (err) {
-    next(createError(500, { message: GET_USER_INFO_FAIL }));
+    next(createError(404, { message: GET_USER_INFO_FAIL }));
   }
 };
 
@@ -48,6 +48,6 @@ exports.signIn = async (req, res, next) => {
 
     res.status(201).send({ result: USER_JOIN_SUCCESS });
   } catch (err) {
-    next(createError(500, { message: GET_USER_INFO_FAIL }));
+    next(createError(404, { message: GET_USER_INFO_FAIL }));
   }
 };

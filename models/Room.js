@@ -18,7 +18,16 @@ const RoomSchema = new mongoose.Schema([
           userId: {
             type: String,
           },
+          email: {
+            type: String,
+          },
           displayName: {
+            type: String,
+          },
+          score: {
+            type: String,
+          },
+          imageUrl: {
             type: String,
           },
         },
