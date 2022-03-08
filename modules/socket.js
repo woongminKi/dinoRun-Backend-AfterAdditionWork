@@ -1,9 +1,8 @@
 const socketIO = require("socket.io");
 const Room = require("../models/Room");
 
-module.exports = (server, app) => {
+module.exports = (server) => {
   const io = socketIO(server, { path: "/socket.io" });
-  app.set("io", io);
 
   io.on("connection", (socket) => {
     console.log("새로운 유저 접속: ", socket.id);
@@ -14,6 +13,14 @@ module.exports = (server, app) => {
 
     socket.on("error", (err) => {
       console.error(err);
+    });
+
+    socket.on("waitJoinRoom", async (user) => {
+      try {
+        socket.broadcast.emit("waitJoinRoom", user);
+      } catch (err) {
+        console.error(err);
+      }
     });
 
     socket.on("joinRoom", async (id, user) => {
@@ -42,6 +49,10 @@ module.exports = (server, app) => {
       } catch (err) {
         console.error(err);
       }
+    });
+
+    socket.on("gameScore", (score) => {
+      socket.broadcast.emit("gameScore", score);
     });
   });
 };
