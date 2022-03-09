@@ -5,12 +5,10 @@ const {
   getRoomInfo,
   registerRoom,
   getRoomPeople,
-  deleteRoom,
 } = require("./controllers/rooms.controller");
 
 router.get("/:id", verifyToken, getRoomInfo);
 router.get("/:id/game", verifyToken, getRoomPeople);
 router.post("/:id", verifyToken, registerRoom);
-router.delete("/:id", deleteRoom);
 
 module.exports = router;

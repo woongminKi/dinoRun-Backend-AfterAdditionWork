@@ -6,9 +6,7 @@ const {
   REGISTER_ROOM_INFO_SUCCESS,
   REGISTER_ROOM_INFO_FAIL,
   GET_ROOM_INFO_FAIL,
-  DELETE_ROOM_INFO_SUCCESS,
   GET_PARTICIPANT_USER_INFO_FAIL,
-  NOT_FOUND,
 } = require("../../utils/constants");
 
 exports.getRoomInfo = async (req, res, next) => {
@@ -43,7 +41,7 @@ exports.registerRoom = async (req, res, next) => {
         },
         roomInfo: {
           title,
-          participants: [user],
+          participants: [],
         },
       },
     ]);
@@ -77,20 +75,5 @@ exports.getRoomPeople = async (req, res, next) => {
         message: GET_PARTICIPANT_USER_INFO_FAIL,
       })
     );
-  }
-};
-
-exports.deleteRoom = async (req, res, next) => {
-  const { _id } = req.body.targetRoom;
-
-  try {
-    await Room.findOneAndDelete({ _id }).lean().exec();
-    const roomArray = await Room.find().lean().exec();
-
-    res
-      .status(200)
-      .send({ result: DELETE_ROOM_INFO_SUCCESS, remainRooms: roomArray });
-  } catch (err) {
-    next(createError(404, NOT_FOUND));
   }
 };
