@@ -5,6 +5,8 @@ const { TOKEN } = require("../../utils/tokenInfo");
 const {
   REGISTER_ROOM_INFO_SUCCESS,
   GET_ROOM_INFO_FAIL,
+  REGISTER_ROOM_INFO_FAIL,
+  GET_PARTICIPANT_USER_INFO_FAIL,
   NOT_FOUND,
 } = require("../../utils/constants");
 
@@ -47,6 +49,33 @@ exports.registerRoom = async (req, res, next) => {
 
     res.status(200).send({ result: REGISTER_ROOM_INFO_SUCCESS });
   } catch (err) {
+    next(createError(404, { message: REGISTER_ROOM_INFO_FAIL }));
+  }
+};
+
+exports.getRoomPeople = async (req, res, next) => {
+  if (res.cookie) {
+    const { email, name } = res.cookie;
+    const newAccessToken = jwt.sign({ email, name }, process.env.SECRET_KEY, {
+      expiresIn: TOKEN.accessTokenLimit,
+    });
+
+    res.status(200).send({ newAccessToken });
+    return;
+  }
+
+  const { roomid } = req.headers;
+
+  try {
+    const currentRoom = await Room.findById(roomid);
+    const currentRoomPeople = currentRoom.roomInfo.participants;
+    res.status(200).send({ currentPeople: currentRoomPeople });
+  } catch (err) {
+    next(
+      createError(404, {
+        message: GET_PARTICIPANT_USER_INFO_FAIL,
+      })
+    );
     next(createError(404, { message: NOT_FOUND }));
   }
 };
