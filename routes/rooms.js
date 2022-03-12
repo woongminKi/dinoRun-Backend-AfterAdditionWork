@@ -7,8 +7,8 @@ const {
   getRoomPeople,
 } = require("./controllers/rooms.controller");
 
-router.get("/", verifyToken, getRoomInfo);
+router.get("/:id", verifyToken, getRoomInfo);
 router.get("/:id/game", verifyToken, getRoomPeople);
-router.post("/", verifyToken, registerRoom);
+router.post("/:id", verifyToken, registerRoom);
 
 module.exports = router;
