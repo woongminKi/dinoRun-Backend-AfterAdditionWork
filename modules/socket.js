@@ -3,7 +3,12 @@ const User = require("../models/User");
 const Room = require("../models/Room");
 
 module.exports = (server) => {
-  const io = socketIO(server, { path: "/socket.io" });
+  const io = socketIO(server, {
+    path: "/socket.io",
+    cors: {
+      origin: process.env.DINORUN_CLIENT_URL,
+    },
+  });
 
   io.on("connection", (socket) => {
     console.log("새로운 유저 접속: ", socket.id);
