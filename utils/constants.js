@@ -14,5 +14,5 @@ module.exports = {
   GET_PARTICIPANT_USER_INFO_FAIL:
     "방에 참가한 유저 데이터 갖고 오는데 실패했습니다.",
   FORBIDDEN: "Forbidden",
-  NOT_FOUND: "Not Found",
+  NOT_FOUND: "Not found",
 };
