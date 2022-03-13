@@ -14,7 +14,7 @@ const serviceAccount = {
 };
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(JSON.parse(serviceAccount)),
 });
 
 module.exports = admin;
