@@ -1,5 +1,4 @@
 const socketIO = require("socket.io");
-const User = require("../models/User");
 const Room = require("../models/Room");
 
 module.exports = (server) => {
@@ -29,7 +28,9 @@ module.exports = (server) => {
       }
     });
 
-    socket.on("joinRoom", async (roomId, user) => {
+    socket.on("joinRoom", async (id, user) => {
+      const roomId = id;
+
       try {
         const currentRoom = await Room.findById(roomId);
 
@@ -43,25 +44,9 @@ module.exports = (server) => {
       }
     });
 
-    socket.on("makeRoom", async (roomData) => {
-      try {
-        io.emit("makeRoom", roomData);
-      } catch (err) {
-        console.error(err);
-      }
-    });
+    socket.on("gameStart", async (id) => {
+      const roomId = id;
 
-    socket.on("checkAnotherPlayerEntered", async (user) => {
-      try {
-        const userDbData = await User.find().lean().exec();
-
-        socket.broadcast.emit("checkAnotherPlayerEntered", user, userDbData);
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    socket.on("gameStart", async (roomId) => {
       try {
         await Room.findByIdAndDelete(roomId);
 
@@ -71,30 +56,8 @@ module.exports = (server) => {
       }
     });
 
-    socket.on("gameScore", async (score) => {
-      try {
-        socket.broadcast.emit("gameScore", score);
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    socket.on("leaveRoom", async (roomId, user) => {
-      try {
-        socket.to(roomId).emit("leaveRoom", user);
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    socket.on("deleteRoom", async (roomId) => {
-      try {
-        await Room.findByIdAndDelete(roomId);
-
-        socket.broadcast.emit("deleteRoom");
-      } catch (err) {
-        console.error(err);
-      }
+    socket.on("gameScore", (score) => {
+      socket.broadcast.emit("gameScore", score);
     });
   });
 };
