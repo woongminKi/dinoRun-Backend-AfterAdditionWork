@@ -25,7 +25,7 @@ const RoomSchema = new mongoose.Schema([
             type: String,
           },
           score: {
-            type: Number,
+            type: String,
           },
           imageUrl: {
             type: String,
