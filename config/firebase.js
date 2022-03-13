@@ -1,6 +1,5 @@
 const admin = require("firebase-admin");
 
-// 깃 커밋 무시 돼 남기는 주석
 admin.initializeApp({
   credential: admin.credential.cert({
     type: process.env.TYPE,
