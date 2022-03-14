@@ -83,7 +83,9 @@ module.exports = (server) => {
 
     socket.on("leaveRoom", async (roomId, user) => {
       try {
-        socket.to(roomId).emit("leaveRoom", user);
+        const userDbData = await User.find().lean().exec();
+
+        socket.to(roomId).emit("leaveRoom", user, userDbData);
       } catch (err) {
         console.error(err);
       }
