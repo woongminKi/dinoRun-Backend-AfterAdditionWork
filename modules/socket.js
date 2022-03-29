@@ -66,7 +66,6 @@ module.exports = (server) => {
         await Room.findByIdAndDelete(roomId);
 
         io.to(roomId).emit("gameStart", roomId);
-        // io.emit("gameStart", roomId);
       } catch (err) {
         console.error(err);
       }
@@ -75,7 +74,6 @@ module.exports = (server) => {
     socket.on("gameScore", async (score, roomId) => {
       try {
         socket.broadcast.to(roomId).emit("gameScore", score);
-        // socket.broadcast.emit("gameScore", score);
       } catch (err) {
         console.error(err);
       }
