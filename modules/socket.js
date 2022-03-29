@@ -61,21 +61,21 @@ module.exports = (server) => {
       }
     });
 
-    socket.on("gameStart", async (id) => {
-      const roomId = id;
-
+    socket.on("gameStart", async (roomId) => {
       try {
         await Room.findByIdAndDelete(roomId);
 
-        io.emit("gameStart", roomId);
+        io.to(roomId).emit("gameStart", roomId);
+        // io.emit("gameStart", roomId);
       } catch (err) {
         console.error(err);
       }
     });
 
-    socket.on("gameScore", (score) => {
+    socket.on("gameScore", async (score, roomId) => {
       try {
-        socket.broadcast.emit("gameScore", score);
+        socket.broadcast.to(roomId).emit("gameScore", score);
+        // socket.broadcast.emit("gameScore", score);
       } catch (err) {
         console.error(err);
       }
